@@ -1,13 +1,15 @@
 import { useAppDispatch } from "@/redux/hooks";
 import { setToken } from "@/redux/slices/authSlice";
+import { saveToken } from "@/utils/storage"; // ✅ storage
 import { router } from "expo-router";
 import { useState } from "react";
 import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function LoginScreen() {
@@ -15,12 +17,33 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     console.log("login pressed");
-    if (email && password) {
-      dispatch(setToken("dummy-token"));
+
+    if (!email || !password) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // 👉 simulate API call (replace later)
+      const token = "dummy-token";
+
+      // 💾 save token
+      await saveToken(token);
+
+      // 🧠 update redux
+      dispatch(setToken(token));
+
+      // 🚀 navigate
       router.replace("/(tabs)");
+    } catch (error) {
+      console.log("Login error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,8 +70,16 @@ export default function LoginScreen() {
           style={styles.input}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Login</Text>
+          )}
         </TouchableOpacity>
 
         <Text style={styles.footer}>
