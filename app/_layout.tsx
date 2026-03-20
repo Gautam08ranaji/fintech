@@ -1,24 +1,31 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { useAppSelector } from "@/redux/hooks";
+import { store } from "@/redux/store";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { Provider } from "react-redux";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+// 👇 THIS FUNCTION GOES HERE
+function RootNavigator() {
+  const { token } = useAppSelector((state) => state.auth);
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  console.log("TOKEN VALUE:", token); // 👈 ADD THIS
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
+    <Stack key={token ? "user" : "guest"} screenOptions={{ headerShown: false }}>
+      {!token ? (
+        <Stack.Screen name="(auth)/login" />) : (
+        <Stack.Screen name="(tabs)" />   // ✅ FIXED
+      )}
+    </Stack>
+  );
+}
+
+// 👇 DEFAULT EXPORT
+export default function RootLayout() {
+  return (
+    <Provider store={store}>
+      <RootNavigator />
       <StatusBar style="auto" />
-    </ThemeProvider>
+    </Provider>
   );
 }

@@ -1,20 +1,25 @@
+import { useAppDispatch } from "@/redux/hooks";
+import { logout } from "@/redux/slices/authSlice";
 import { router } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function HomeScreen() {
-  console.log("home screen");
+export default function ProfileScreen() {
+  const dispatch = useAppDispatch();
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Dashboard</Text>
-        <Text style={styles.subtitle}>Welcome to Fintech App</Text>
+        <Text style={styles.title}>Profile</Text>
+        <Text style={styles.subtitle}>Welcome to your account</Text>
 
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/(tabs)/profile")}
+          style={styles.logoutButton}
+          onPress={() => {
+            dispatch(logout());
+            router.replace("/(auth)/login"); // ✅ FORCE REDIRECT
+          }}
         >
-          <Text style={styles.buttonText}>Go to Profile</Text>
+          <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -26,11 +31,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f7fb",
     justifyContent: "center",
-    alignItems: "center",
     padding: 20,
   },
   card: {
-    width: "100%",
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 16,
@@ -41,7 +44,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "700",
     marginBottom: 5,
   },
@@ -50,13 +53,13 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 20,
   },
-  button: {
-    backgroundColor: "#2563eb",
+  logoutButton: {
+    backgroundColor: "#ef4444",
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 10,
   },
-  buttonText: {
+  logoutText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
