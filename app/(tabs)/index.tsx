@@ -1,14 +1,22 @@
+import { SPACING } from "@/config/spacing"; // ✅ spacing system
+import { useTheme } from "@/hooks/useTheme"; // ✅ dynamic theme
 import { router } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function HomeScreen() {
+  const COLORS = useTheme();
+  const styles = getStyles(COLORS);
+
   console.log("home screen");
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>Dashboard</Text>
-        <Text style={styles.subtitle}>Welcome to Fintech App</Text>
+
+        <Text style={styles.subtitle}>
+          Welcome to Fintech App
+        </Text>
 
         <TouchableOpacity
           style={styles.button}
@@ -21,44 +29,44 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f7fb",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  card: {
-    width: "100%",
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 16,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "700",
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: "#2563eb",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
+const getStyles = (COLORS: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: COLORS.background, // ✅ theme
+      justifyContent: "center",
+      alignItems: "center",
+      padding: SPACING.screenPadding, // ✅ spacing
+    },
+    card: {
+      width: "100%",
+      backgroundColor: COLORS.card, // ✅ theme
+      padding: SPACING.cardPadding,
+      borderRadius: SPACING.radiusLg,
+      elevation: 5,
+      shadowColor: COLORS.shadow,
+      alignItems: "center",
+    },
+    title: {
+      fontSize: 26,
+      fontWeight: "700",
+      color: COLORS.text, // ✅ theme
+      marginBottom: SPACING.xs,
+    },
+    subtitle: {
+      fontSize: 14,
+      color: COLORS.textSecondary, // ✅ theme
+      marginBottom: SPACING.lg,
+    },
+    button: {
+      backgroundColor: COLORS.primary, // ✅ theme
+      paddingVertical: SPACING.buttonPadding,
+      paddingHorizontal: SPACING.xl,
+      borderRadius: SPACING.radiusMd,
+    },
+    buttonText: {
+      color: COLORS.textLight,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+  });

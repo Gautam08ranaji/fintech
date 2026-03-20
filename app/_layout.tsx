@@ -1,3 +1,4 @@
+import { useTheme } from "@/hooks/useTheme"; // ✅ THEME
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setToken } from "@/redux/slices/authSlice";
 import { store } from "@/redux/store";
@@ -7,10 +8,12 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { Provider } from "react-redux";
 
-// 👇 THIS FUNCTION GOES HERE
 function RootNavigator() {
   const dispatch = useAppDispatch();
   const { token, loading } = useAppSelector((state) => state.auth);
+  const { mode } = useAppSelector((state) => state.theme); // ✅ FIXED
+
+  const COLORS = useTheme();
 
   useEffect(() => {
     const loadToken = async () => {
@@ -21,28 +24,36 @@ function RootNavigator() {
     loadToken();
   }, []);
 
-  // ⏳ Splash / loading state
-  if (loading) {
-    return null; // or loader
-  }
+  if (loading) return null;
 
   return (
-    <Stack key={token ? "user" : "guest"} screenOptions={{ headerShown: false }}>
-      {!token ? (
-        <Stack.Screen name="(auth)/login" />
-      ) : (
-        <Stack.Screen name="(tabs)" />
-      )}
-    </Stack>
+    <>
+      <Stack
+        key={`${mode}-${token ? "user" : "guest"}`} // ✅ now works
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: COLORS.background },
+        }}
+      >
+        {!mode ? (
+          <Stack.Screen name="(auth)/theme" />
+        ) : !token ? (
+          <Stack.Screen name="(auth)/login" />
+        ) : (
+          <Stack.Screen name="(tabs)" />
+        )}
+      </Stack>
+
+      <StatusBar style={COLORS.isDark ? "light" : "dark"} />
+    </>
   );
 }
 
-// 👇 DEFAULT EXPORT
+// 👇 ROOT
 export default function RootLayout() {
   return (
     <Provider store={store}>
       <RootNavigator />
-      <StatusBar style="auto" />
     </Provider>
   );
 }

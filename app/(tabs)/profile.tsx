@@ -1,6 +1,8 @@
+import { SPACING } from "@/config/spacing"; // ✅ spacing
+import { useTheme } from "@/hooks/useTheme"; // ✅ theme
 import { useAppDispatch } from "@/redux/hooks";
 import { logout } from "@/redux/slices/authSlice";
-import { removeToken } from "@/utils/storage"; // ✅ storage
+import { removeToken } from "@/utils/storage";
 import { router } from "expo-router";
 import {
   Alert,
@@ -11,46 +13,40 @@ import {
 } from "react-native";
 
 export default function ProfileScreen() {
+  const COLORS = useTheme();
+  const styles = getStyles(COLORS);
+
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await removeToken(); // ❌ clear storage
+            dispatch(logout()); // 🧠 redux
+            router.replace("/(auth)/login"); // 🚀 navigate
+          } catch (error) {
+            console.log("Logout error:", error);
+          }
         },
-        {
-          text: "Logout",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              // ❌ remove token from storage
-              await removeToken();
-
-              // 🧠 update redux
-              dispatch(logout());
-
-              // 🚀 navigate to login
-              router.replace("/(auth)/login");
-            } catch (error) {
-              console.log("Logout error:", error);
-            }
-          },
-        },
-      ]
-    );
+      },
+    ]);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>Profile</Text>
-        <Text style={styles.subtitle}>Welcome to your account</Text>
 
-        {/* 👤 Dummy user info (can replace with API later) */}
+        <Text style={styles.subtitle}>
+          Welcome to your account
+        </Text>
+
+        {/* 👤 USER INFO */}
         <View style={styles.infoBox}>
           <Text style={styles.label}>Name</Text>
           <Text style={styles.value}>Gautam Rana</Text>
@@ -67,56 +63,57 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f7fb",
-    justifyContent: "center",
-    padding: 20,
-  },
-  card: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 16,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 20,
-  },
-  infoBox: {
-    width: "100%",
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 10,
-  },
-  value: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  logoutButton: {
-    backgroundColor: "#ef4444",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  logoutText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
+const getStyles = (COLORS: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: COLORS.background, // ✅ theme
+      justifyContent: "center",
+      padding: SPACING.screenPadding,
+    },
+    card: {
+      backgroundColor: COLORS.card, // ✅ theme
+      padding: SPACING.cardPadding,
+      borderRadius: SPACING.radiusLg,
+      elevation: 5,
+      shadowColor: COLORS.shadow,
+      alignItems: "center",
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: "700",
+      color: COLORS.text, // ✅ theme
+      marginBottom: SPACING.xs,
+    },
+    subtitle: {
+      fontSize: 14,
+      color: COLORS.textSecondary, // ✅ theme
+      marginBottom: SPACING.lg,
+    },
+    infoBox: {
+      width: "100%",
+      marginBottom: SPACING.lg,
+    },
+    label: {
+      fontSize: 12,
+      color: COLORS.textSecondary,
+      marginTop: SPACING.sm,
+    },
+    value: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: COLORS.text,
+    },
+    logoutButton: {
+      backgroundColor: COLORS.error, // ✅ theme
+      paddingVertical: SPACING.buttonPadding,
+      paddingHorizontal: SPACING.xl,
+      borderRadius: SPACING.radiusMd,
+      marginTop: SPACING.sm,
+    },
+    logoutText: {
+      color: COLORS.textLight,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+  });
