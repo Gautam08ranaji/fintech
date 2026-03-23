@@ -1,11 +1,7 @@
 import { SPACING } from "@/config/spacing";
 import { useTheme } from "@/hooks/useTheme";
-import { useAppDispatch } from "@/redux/hooks";
-import { setToken } from "@/redux/slices/authSlice";
-import { saveToken } from "@/utils/storage";
 import { router } from "expo-router";
 import { useState } from "react";
-import { useTranslation } from "react-i18next"; // ✅ ADD
 import {
   Alert,
   StyleSheet,
@@ -15,74 +11,74 @@ import {
   View,
 } from "react-native";
 
-export default function LoginScreen() {
+export default function ApplyLoan() {
   const COLORS = useTheme();
   const styles = getStyles(COLORS);
 
-  const { t } = useTranslation(); // ✅ ADD
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
+  const [tenure, setTenure] = useState("");
 
-  const dispatch = useAppDispatch();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert(t("common.error"), t("auth.enterCredentials")); // ✅ i18n
+  const handleApply = () => {
+    if (!name || !amount || !tenure) {
+      Alert.alert("Error", "Please fill all fields");
       return;
     }
 
-    try {
-      const token = "dummy-token";
+    console.log("Loan Applied:", { name, amount, tenure });
 
-      await saveToken(token);
-      dispatch(setToken(token));
-
-      router.replace("/(tabs)");
-    } catch (error) {
-      Alert.alert(t("common.error"), t("auth.loginFailed")); // ✅ i18n
-    }
+    Alert.alert("Success", "Loan application submitted!", [
+      {
+        text: "OK",
+        onPress: () => router.replace("/(tabs)/loan"),
+      },
+    ]);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        {/* ✅ TITLE */}
-        <Text style={styles.title}>{t("auth.welcome")}</Text>
-
+        <Text style={styles.title}>Apply for Loan</Text>
         <Text style={styles.subtitle}>
-          {t("auth.loginSubtitle")}
+          Fill details to apply instantly
         </Text>
 
-        {/* ✅ EMAIL */}
+        {/* 👤 NAME */}
+        <Text style={styles.label}>Full Name</Text>
         <TextInput
-          placeholder={t("auth.email")}
+          placeholder="Enter your name"
           placeholderTextColor={COLORS.textSecondary}
-          value={email}
-          onChangeText={setEmail}
+          value={name}
+          onChangeText={setName}
           style={styles.input}
         />
 
-        {/* ✅ PASSWORD */}
+        {/* 💰 AMOUNT */}
+        <Text style={styles.label}>Loan Amount (₹)</Text>
         <TextInput
-          placeholder={t("auth.password")}
+          placeholder="Enter amount"
           placeholderTextColor={COLORS.textSecondary}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="numeric"
           style={styles.input}
         />
 
-        {/* ✅ BUTTON */}
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>{t("auth.login")}</Text>
+        {/* ⏳ TENURE */}
+        <Text style={styles.label}>Tenure (Months)</Text>
+        <TextInput
+          placeholder="Enter tenure"
+          placeholderTextColor={COLORS.textSecondary}
+          value={tenure}
+          onChangeText={setTenure}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+
+        {/* 🚀 APPLY BUTTON */}
+        <TouchableOpacity style={styles.button} onPress={handleApply}>
+          <Text style={styles.buttonText}>Submit Application</Text>
         </TouchableOpacity>
-
-        {/* ✅ FOOTER */}
-        <Text style={styles.footer}>
-          {t("auth.noAccount")}{" "}
-          <Text style={styles.link}>{t("auth.signup")}</Text>
-        </Text>
       </View>
     </View>
   );
@@ -96,6 +92,7 @@ const getStyles = (COLORS: any) =>
       justifyContent: "center",
       padding: SPACING.screenPadding,
     },
+
     card: {
       backgroundColor: COLORS.card,
       padding: SPACING.cardPadding,
@@ -103,47 +100,49 @@ const getStyles = (COLORS: any) =>
       elevation: 5,
       shadowColor: COLORS.shadow,
     },
+
     title: {
-      fontSize: 26,
+      fontSize: 22,
       fontWeight: "700",
       color: COLORS.text,
       marginBottom: SPACING.xs,
       textAlign: "center",
     },
+
     subtitle: {
       fontSize: 14,
       color: COLORS.textSecondary,
       marginBottom: SPACING.lg,
       textAlign: "center",
     },
+
+    label: {
+      fontSize: 13,
+      color: COLORS.textSecondary,
+      marginBottom: 4,
+      marginTop: SPACING.sm,
+    },
+
     input: {
       borderWidth: 1,
       borderColor: COLORS.border,
       padding: SPACING.inputPadding,
       borderRadius: SPACING.radiusMd,
-      marginBottom: SPACING.md,
-      fontSize: 16,
       color: COLORS.text,
+      marginBottom: SPACING.md,
     },
+
     button: {
       backgroundColor: COLORS.primary,
       paddingVertical: SPACING.buttonPadding,
       borderRadius: SPACING.radiusMd,
       alignItems: "center",
-      marginTop: SPACING.sm,
+      marginTop: SPACING.lg,
     },
+
     buttonText: {
       color: COLORS.textLight,
       fontSize: 16,
-      fontWeight: "600",
-    },
-    footer: {
-      marginTop: SPACING.md,
-      textAlign: "center",
-      color: COLORS.textSecondary,
-    },
-    link: {
-      color: COLORS.link,
       fontWeight: "600",
     },
   });

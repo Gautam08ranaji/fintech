@@ -1,0 +1,16 @@
+{
+  "common": {
+    "error": "Error"
+  },
+  "auth": {
+    "welcome": "Welcome Back 👋",
+    "loginSubtitle": "Login to your account",
+    "email": "Email",
+    "password": "Password",
+    "login": "Login",
+    "noAccount": "Don't have an account?",
+    "signup": "Sign up",
+    "enterCredentials": "Please enter email and password",
+    "loginFailed": "Login failed"
+  }
+}

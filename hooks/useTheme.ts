@@ -6,15 +6,21 @@ export function useTheme() {
   const systemTheme = useColorScheme();
   const mode = useAppSelector((state) => state.theme.mode);
 
-  let theme = systemTheme;
+  // ✅ fallback to light if systemTheme is null
+  let resolvedTheme: "light" | "dark" = systemTheme === "dark" ? "dark" : "light";
 
-  if (mode === "light") theme = "light";
-  if (mode === "dark") theme = "dark";
+  // ✅ override based on user selection
+  if (mode === "light") resolvedTheme = "light";
+  if (mode === "dark") resolvedTheme = "dark";
+  if (mode === "system") {
+    resolvedTheme = systemTheme === "dark" ? "dark" : "light";
+  }
 
-  const colors = theme === "dark" ? darkColors : lightColors;
+  const colors = resolvedTheme === "dark" ? darkColors : lightColors;
 
   return {
     ...colors,
-    isDark: theme === "dark",
+    isDark: resolvedTheme === "dark",
+    mode: resolvedTheme, // ✅ useful for debugging/UI
   };
 }
