@@ -1,4 +1,5 @@
-import "@/i18n"; // 🔥 ADD THIS LINE FIRST
+// app/_layout.tsx
+import "@/i18n";
 
 import { useTheme } from "@/hooks/useTheme";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -6,9 +7,9 @@ import { setToken } from "@/redux/slices/authSlice";
 import { setTheme } from "@/redux/slices/themeSlice";
 import { store } from "@/redux/store";
 import { getTheme, getToken } from "@/utils/storage";
-import { Redirect, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { Provider } from "react-redux";
 
@@ -19,30 +20,35 @@ const isValidTheme = (
   return value === "light" || value === "dark" || value === "system";
 };
 
-function RootNavigator() {
+function RootLayoutContent() {
   const dispatch = useAppDispatch();
-
-  const { token, loading } = useAppSelector((state) => state.auth);
-  const { mode } = useAppSelector((state) => state.theme);
-
+  const { token, loading: authLoading } = useAppSelector((state) => state.auth);
+  const { mode, loading: themeLoading } = useAppSelector((state) => state.theme);
   const COLORS = useTheme();
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const initApp = async () => {
-      const [savedToken, savedTheme] = await Promise.all([
-        getToken(),
-        getTheme(),
-      ]);
+      try {
+        const [savedToken, savedTheme] = await Promise.all([
+          getToken(),
+          getTheme(),
+        ]);
 
-      dispatch(setToken(savedToken));
-      dispatch(setTheme(isValidTheme(savedTheme) ? savedTheme : null));
+        dispatch(setToken(savedToken));
+        dispatch(setTheme(isValidTheme(savedTheme) ? savedTheme : null));
+      } catch (error) {
+        console.error("Initialization error:", error);
+      } finally {
+        setIsInitialized(true);
+      }
     };
 
     initApp();
   }, []);
 
-  // ✅ loader
-  if (loading) {
+  // Show loader while initializing
+  if (!isInitialized || authLoading || themeLoading) {
     return (
       <View
         style={{
@@ -57,23 +63,24 @@ function RootNavigator() {
     );
   }
 
-  // 🔥 REDIRECT LOGIC
-  if (mode === null) {
-    return <Redirect href="/(auth)/theme" />;
-  }
-
-  if (!token) {
-    return <Redirect href="/(auth)/login" />;
-  }
-
-  return <Redirect href="/(tabs)" />;
+  // Use Stack navigator with conditional screens
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      {mode === null ? (
+        <Stack.Screen name="(auth)/theme" />
+      ) : !token ? (
+        <Stack.Screen name="(auth)/login" />
+      ) : (
+        <Stack.Screen name="(tabs)" />
+      )}
+    </Stack>
+  );
 }
 
 export default function RootLayout() {
   return (
     <Provider store={store}>
-      <Stack screenOptions={{ headerShown: false }} />
-      <RootNavigator />
+      <RootLayoutContent />
       <StatusBar style="auto" />
     </Provider>
   );

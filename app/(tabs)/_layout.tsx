@@ -1,3 +1,4 @@
+// app/(tabs)/_layout.tsx (updated to include index)
 import { useTheme } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
@@ -34,7 +35,7 @@ export default function TabsLayout() {
     >
       {/* 🏠 HOME */}
       <Tabs.Screen
-        name="index"
+        name="dashboard"
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => (

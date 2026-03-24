@@ -3,14 +3,25 @@
     "error": "Error"
   },
   "auth": {
-    "welcome": "Welcome Back 👋",
-    "loginSubtitle": "Login to your account",
+    "welcome": "Login",
+    "welcomeBack": "Welcome Back 👋",
+    "loginSubtitle": "Sign in to continue to your account",
+
     "email": "Email",
+    "emailPlaceholder": "Enter your email",
+
     "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+
     "login": "Login",
+    "signup": "Sign Up",
     "noAccount": "Don't have an account?",
-    "signup": "Sign up",
+
+    "forgotPassword": "Forgot Password?",
+
     "enterCredentials": "Please enter email and password",
-    "loginFailed": "Login failed"
+    "invalidEmail": "Please enter a valid email address",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "loginFailed": "Login failed. Please try again"
   }
 }

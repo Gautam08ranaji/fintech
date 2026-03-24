@@ -3,10 +3,10 @@ import { useTheme } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -36,8 +36,8 @@ export default function BodyLayout({
           {type === "dashboard" ? (
             <>
               <View>
-                <Text style={styles.greeting}>Welcome back 👋</Text>
-                <Text style={styles.title}>Dashboard</Text>
+                {/* <Text style={styles.greeting}>Welcome back to👋</Text> */}
+                <Text style={styles.title}>FinTech</Text>
               </View>
 
               <View style={styles.actions}>
@@ -114,7 +114,7 @@ export default function BodyLayout({
     },
 
     scrollContent: {
-      paddingBottom: 40,
+      // paddingBottom: 40,
     },
 
     // 🔥 MAIN CARD
